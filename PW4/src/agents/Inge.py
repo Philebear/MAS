@@ -24,6 +24,7 @@ class Inge(Agent):
         self.fav = 'none'
         self.argu = ('none', 'none', 'none')
         self.arg_list = []
+        self.list_of_arguments = []
         if self.name == 'ing1':
             self.bind('PUSH', alias='commit1', handler='display')
             self.bind('REP', alias='response_channel', handler='answer')
@@ -126,15 +127,19 @@ class Inge(Agent):
                         if x[0] == self.selected:
                             if x[2] == -4:
                                 disp = f'{x[1]} is Very Bad'
+                                self.argu = (self.selected, disp, 'counter')
+                                self.send_msg(self.address, MessagesPerformative.ARGUE, argument=self.argu)
                                 break
                             elif x[2] == -2:
                                 disp = f'{x[1]} is Bad'
+                                self.argu = (self.selected, disp, 'counter')
+                                self.send_msg(self.address, MessagesPerformative.ARGUE, argument=self.argu)
                                 break
                             elif x[2] == 1:
                                 disp = f'{x[1]} is only okay'
+                                self.argu = (self.selected, disp, 'counter')
+                                self.send_msg(self.address, MessagesPerformative.ARGUE, argument=self.argu)
                                 break
-                    self.argu = (self.selected, disp, 'counter')
-                    self.send_msg(self.address, MessagesPerformative.ARGUE, argument=self.argu)
                 elif res:
                     self.argu = (message.get_content()[1], 'none', 'none')
                     self.send_msg(self.address, MessagesPerformative.ACCEPT, argument=self.argu)
@@ -147,12 +152,15 @@ class Inge(Agent):
                         if x[0] == self.selected:
                             if x[2] == 4:
                                 cont = f'{x[1]} is Very Good'
+                                self.argu = (self.selected, cont, 'pro')
+                                self.send_msg(self.address, MessagesPerformative.ARGUE, argument=self.argu)
                                 break
                             elif x[2] == 2:
                                 cont = f'{x[1]} is Good'
+                                self.argu = (self.selected, cont, 'pro')
+                                self.send_msg(self.address, MessagesPerformative.ARGUE, argument=self.argu)
                                 break
-                    self.argu = (self.selected, cont, 'pro')
-                    self.send_msg(self.address, MessagesPerformative.ARGUE, argument=self.argu)
+
                 elif res:
                     if self.selected == self.agent_pref.ranking[1][1]:
                         self.selected = self.agent_pref.ranking[2][1]
@@ -210,17 +218,19 @@ class Inge(Agent):
                                         cont = x[1]
                                         if x[2] == -4:
                                             disp = cont + 'is Very Bad'
+                                            self.arg_list.append(argument[1])
+                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+                                            self.send(channel, cnt)
                                             break
                                         elif x[2] == -2:
                                             disp = cont + 'is Bad'
+                                            self.arg_list.append(argument[1])
+                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+                                            self.send(channel, cnt)
                                             break
-                                    else:
-                                        continue
-                            self.arg_list.append(argument[1])
-                            cnt = Messages(self.name, self.engineer_list, msg, disp)
-                            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
-                            self.send(channel, cnt)
-                    else:
+                    elif res:
                         cnt = Messages(self.name, self.engineer_list, MessagesPerformative.ACCEPT, self.selected)
                         self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
                         self.send(channel, cnt)
@@ -239,17 +249,19 @@ class Inge(Agent):
                                         cont = x[1]
                                         if x[2] == 4:
                                             disp = cont + 'is Very Good'
+                                            self.arg_list.append(argument[1])
+                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+                                            self.send(channel, cnt)
                                             break
                                         elif x[2] == 2:
                                             disp = cont + 'is Good'
+                                            self.arg_list.append(argument[1])
+                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+                                            self.send(channel, cnt)
                                             break
-                                    else:
-                                        continue
-                            self.arg_list.append(argument[1])
-                            cnt = Messages(self.name, self.engineer_list, msg, disp)
-                            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
-                            self.send(channel, cnt)
-                    else:
+                    elif res:
                         cnt = Messages(self.name, self.engineer_list, MessagesPerformative.ACCEPT, self.selected)
                         self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
                         self.send(channel, cnt)
@@ -260,16 +272,18 @@ class Inge(Agent):
                             cont = x[1]
                             if x[2] == 4:
                                 disp = cont + 'is Very Good'
+                                self.arg_list.append(cont)
+                                cnt = Messages(self.name, self.engineer_list, msg, (self.selected, disp, 'pro'))
+                                self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+                                self.send(channel, cnt)
                                 break
                             elif x[2] == 2:
                                 disp = cont + 'is Good'
+                                self.arg_list.append(cont)
+                                cnt = Messages(self.name, self.engineer_list, msg, (self.selected, disp, 'pro'))
+                                self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+                                self.send(channel, cnt)
                                 break
-                        else:
-                            continue
-                self.arg_list.append(cont)
-                cnt = Messages(self.name, self.engineer_list, msg, (self.selected, disp, 'pro'))
-                self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
-                self.send(channel, cnt)
 
         if msg == MessagesPerformative.ASK_WHY:
             cnt = Messages(self.name, self.engineer_list, MessagesPerformative.ASK_WHY, "why? {}".format(self.selected))
