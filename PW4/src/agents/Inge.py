@@ -50,11 +50,11 @@ class Inge(Agent):
 
         elif self.name == 'ing2':
             self.agent_pref = Preferences(self.name)
-            self.agent_pref.set_criterion_name_list([CriterionName.PRODUCTION_COST,
-                                                     CriterionName.CONSUMPTION,
-                                                     CriterionName.DURABILITY,
+            self.agent_pref.set_criterion_name_list([CriterionName.ENVIRONMENT_IMPACT,
                                                      CriterionName.NOISE,
-                                                     CriterionName.ENVIRONMENT_IMPACT])
+                                                     CriterionName.DURABILITY,
+                                                     CriterionName.CONSUMPTION,
+                                                     CriterionName.PRODUCTION_COST])
 
     def set_criteria(self, item, crit, value):
         self.agent_pref.add_criterion_value(CriterionValue(item, crit, value))
