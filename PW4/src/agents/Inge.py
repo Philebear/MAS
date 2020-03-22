@@ -217,16 +217,16 @@ class Inge(Agent):
                                     if x[1] not in self.arg_list:
                                         cont = x[1]
                                         if x[2] == -4:
-                                            disp = cont + 'is Very Bad'
+                                            #disp = (cont, 'is Very Bad')
                                             self.arg_list.append(argument[1])
-                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            cnt = Messages(self.name, self.engineer_list, msg, (cont, 'is Very Bad', 'counter'))
                                             self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
                                             self.send(channel, cnt)
                                             break
                                         elif x[2] == -2:
-                                            disp = cont + 'is Bad'
+                                            #disp = (cont, 'is Bad')
                                             self.arg_list.append(argument[1])
-                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            cnt = Messages(self.name, self.engineer_list, msg, (cont, 'is Bad', 'counter'))
                                             self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
                                             self.send(channel, cnt)
                                             break
@@ -248,16 +248,16 @@ class Inge(Agent):
                                     if x[1] not in self.arg_list:
                                         cont = x[1]
                                         if x[2] == 4:
-                                            disp = cont + 'is Very Good'
+                                            #disp = (cont, 'is Very Good')
                                             self.arg_list.append(argument[1])
-                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            cnt = Messages(self.name, self.engineer_list, msg, (cont, 'is Very Good', 'pro'))
                                             self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
                                             self.send(channel, cnt)
                                             break
                                         elif x[2] == 2:
-                                            disp = cont + 'is Good'
+                                            #disp = (cont, 'is Good')
                                             self.arg_list.append(argument[1])
-                                            cnt = Messages(self.name, self.engineer_list, msg, disp)
+                                            cnt = Messages(self.name, self.engineer_list, msg, (cont, 'is Good', 'pro'))
                                             self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
                                             self.send(channel, cnt)
                                             break

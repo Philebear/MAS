@@ -7,8 +7,6 @@ from preferences.Preferences import Preferences
 from messages.Messages import Messages
 from messages.MessagePerformative import MessagesPerformative
 
-from agents.Engineer import Engineer
-
 
 class Arguments:
     """Argument  class.
