@@ -20,6 +20,7 @@ class Inge(Agent):
         self.item_list = []
         self.engineer_list = []
         self.man_list = []
+        self.committed = False
         self.selected = 'none'
         self.fav = 'none'
         self.argu = ('none', 'none', 'none')
@@ -50,11 +51,11 @@ class Inge(Agent):
 
         elif self.name == 'ing2':
             self.agent_pref = Preferences(self.name)
-            self.agent_pref.set_criterion_name_list([CriterionName.ENVIRONMENT_IMPACT,
-                                                     CriterionName.NOISE,
-                                                     CriterionName.DURABILITY,
+            self.agent_pref.set_criterion_name_list([CriterionName.PRODUCTION_COST,
                                                      CriterionName.CONSUMPTION,
-                                                     CriterionName.PRODUCTION_COST])
+                                                     CriterionName.DURABILITY,
+                                                     CriterionName.NOISE,
+                                                     CriterionName.ENVIRONMENT_IMPACT])
 
     def set_criteria(self, item, crit, value):
         self.agent_pref.add_criterion_value(CriterionValue(item, crit, value))
@@ -109,12 +110,15 @@ class Inge(Agent):
         self.log_info("message received: {}".format(message.get_perf_n_content()))
 
         if message.get_perf() == MessagesPerformative.PROPOSE:
-            if message.get_content()[1] == self.fav:
-                self.argu = (message.get_content()[1], 'none', 'none')
+            self.committed = False
+            if message.get_content() == self.agent_pref.ranking[0][1]:
+                self.fav = self.agent_pref.ranking[0][1]
+                self.selected = self.agent_pref.ranking[0][1]
+                self.argu = (message.get_content(), 'none', 'none')
                 self.send_msg(self.address, MessagesPerformative.ACCEPT, argument=self.argu)
                 self.send_msg(self.address, MessagesPerformative.COMMIT)
-                self.log_info("message sent: COMMIT {}".format(message.get_content()[1]))
-            elif message.get_content()[1] != self.agent_pref.ranking[0][1]:
+                self.log_info("message sent: COMMIT {}".format(message.get_content()))
+            elif message.get_content() != self.agent_pref.ranking[0][1]:
                 self.argu = (message.get_content()[1], 'none', 'none')
                 self.selected = message.get_content()
                 self.send_msg(self.address, MessagesPerformative.ASK_WHY, argument=self.argu)
@@ -172,9 +176,13 @@ class Inge(Agent):
                         self.log_info("message sent: PROPOSE {}".format(message.get_content()[1]))
 
         if message.get_perf() == MessagesPerformative.COMMIT:
-            self.send_msg(self.address, MessagesPerformative.COMMIT)
-            self.send_msg(self.commit, MessagesPerformative.COMMIT)
-            self.log_info("message sent: COMMIT MANAGER {}".format(self.selected))
+            if self.committed is False:
+                self.committed = True
+                self.send_msg(self.address, MessagesPerformative.COMMIT)
+                self.send_msg(self.commit, MessagesPerformative.COMMIT)
+                self.log_info("message sent: COMMIT MANAGER {}".format(self.selected))
+            elif self.committed is True:
+                pass
 
         if message.get_perf() == MessagesPerformative.ASK_WHY:
             self.send_msg(self.address, MessagesPerformative.ARGUE)
@@ -183,6 +191,7 @@ class Inge(Agent):
     def send_msg(self, channel, msg, argument=None):
 
         if msg == MessagesPerformative.PROPOSE:
+            self.committed = False
             if self.selected != 'none':
                 cnt = Messages(self.name, self.engineer_list, msg, self.selected)
             else:
@@ -198,6 +207,14 @@ class Inge(Agent):
 
         if msg == MessagesPerformative.COMMIT:
             cnt = Messages(self.name, self.engineer_list, msg, self.selected)
+            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+            self.send(channel, cnt)
+        if msg == MessagesPerformative.ASK_WHY:
+            cnt = Messages(self.name, self.engineer_list, MessagesPerformative.ASK_WHY, "why? {}".format(self.selected))
+            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
+            self.send(channel, cnt)
+        if msg == MessagesPerformative.ACCEPT:
+            cnt = Messages(self.name, self.engineer_list, MessagesPerformative.ACCEPT, "Accept {}".format(self.selected))
             self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
             self.send(channel, cnt)
 
@@ -285,8 +302,4 @@ class Inge(Agent):
                                 self.send(channel, cnt)
                                 break
 
-        if msg == MessagesPerformative.ASK_WHY:
-            cnt = Messages(self.name, self.engineer_list, MessagesPerformative.ASK_WHY, "why? {}".format(self.selected))
-            self.log_info("Message sent: {}".format(cnt.get_perf_n_content()))
-            self.send(channel, cnt)
 
