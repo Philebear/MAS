@@ -34,7 +34,6 @@ class Inge(Agent):
             self.commit = 'commit1'
 
         elif self.name == 'ing2':
-            self.bind('PUSH', alias='commit2', handler='display')
             self.bind('PUSH', alias='push_channel2', handler='argue')
             self.address = 'push_channel2'
             self.commit = 'commit2'
@@ -179,8 +178,9 @@ class Inge(Agent):
             if self.committed is False:
                 self.committed = True
                 self.send_msg(self.address, MessagesPerformative.COMMIT)
-                self.send_msg(self.commit, MessagesPerformative.COMMIT)
-                self.log_info("message sent: COMMIT MANAGER {}".format(self.selected))
+                if self.name == 'ing1':
+                    self.send_msg(self.commit, MessagesPerformative.COMMIT)
+                    self.log_info("message sent: COMMIT MANAGER {}".format(self.selected))
             elif self.committed is True:
                 pass
 

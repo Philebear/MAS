@@ -44,6 +44,12 @@ class Manager(Agent):
     def display(self, message):
         self.log_info("message received: {}".format(message.get_content()))
 
+    def commit(self, message):
+        self.update_lists(message.get_content())
+        print('list of selected items', self.selected_items)
+        print('list of available items', self.list_items)
+        self.log_info("message received: {}".format(message.get_content()))
+
     def send_msg(self, channel, perf):
         if perf == MessagesPerformative.INFORM_ENG:
             cnt = Messages(self.name, self.engineer_list, perf, self.list_items)

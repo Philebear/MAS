@@ -95,8 +95,7 @@ if __name__ == '__main__':
     Engineer_2.connect(Manager_1.addr('main'), handler='display')
 
     Manager_1.connect(Engineer_1.addr('response_channel'), alias="response_channel")
-    Manager_1.connect(Engineer_1.addr('commit1'), handler="display")
-    Manager_1.connect(Engineer_2.addr('commit2'), handler="display")
+    Manager_1.connect(Engineer_1.addr('commit1'), handler="commit")
     Engineer_1.connect(Engineer_2.addr('push_channel2'), handler="argue")
     Engineer_2.connect(Engineer_1.addr('push_channel1'), handler="argue")
 
